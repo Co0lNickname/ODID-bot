@@ -25,6 +25,5 @@ async def run():
     )
 
     await dispatcher.start_polling(
-        odid_bot,
-        users_tokens={}
+        odid_bot
     )
