@@ -2,7 +2,7 @@ import structlog
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from handlers.greeting import router as greeting_router
+from routers.throwing import router as throwing_router
 
 logger = structlog.get_logger(__name__)
 
@@ -17,7 +17,7 @@ async def run():
     Main loop functions for polling telegram bot
     """
     dispatcher.include_routers(
-        greeting_router,
+        throwing_router,
     )
 
     await odid_bot.delete_webhook(
