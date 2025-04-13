@@ -1,0 +1,12 @@
+### IDEA ###
+.idea
+.idea/
+**/.idea/
+
+### VSCODE ###
+.code
+.code/
+**/.code/
+.vscode
+.vscode/
+**/.vscode/
