@@ -1,0 +1,9 @@
+x-bot-variables: &bot-variables
+  TELEGRAM_BOT_TOKEN_KEY: 7539369932:AAGqlBtzdRz7VAypTtgLaiJN-V3U9kmXuh8
+services:
+  bot:
+    container_name: imei-bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment: *bot-variables
