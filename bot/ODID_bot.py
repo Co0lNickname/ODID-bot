@@ -3,11 +3,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from routers.throwing import router as throwing_router
+from settings import telegram_bot_token
 
 logger = structlog.get_logger(__name__)
 
-bot_token = ''
-odid_bot = Bot(token=bot_token)
+odid_bot = Bot(token=telegram_bot_token)
 storage = MemoryStorage()
 dispatcher = Dispatcher(storage=storage)
 

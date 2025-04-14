@@ -7,7 +7,7 @@ logger = structlog.get_logger(__name__)
 
 
 class Settings(Enum):
-    TELEGRAM_BOT_TOKEN_KEY = environ.get('TELEGRAM_BOT_TOKEN_KEY', None)
+    TELEGRAM_BOT_TOKEN_KEY = environ.get('TELEGRAM_BOT_TOKEN_KEY', '')
 
     @staticmethod
     def to_string():
@@ -19,4 +19,4 @@ logger.info(
     settings=Settings.to_string()
 )
 
-telegram_bot_token = Settings.TELEGRAM_BOT_TOKEN_KEY.value
+telegram_bot_token: str = Settings.TELEGRAM_BOT_TOKEN_KEY.value
