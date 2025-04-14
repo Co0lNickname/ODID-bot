@@ -25,4 +25,4 @@ USER appuser
 
 COPY . .
 
-CMD ["python3", "-m", "bot.ODID_bot"]
+CMD ["python3", "-m", "bot.run"]
