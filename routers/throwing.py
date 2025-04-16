@@ -15,10 +15,10 @@ router.message.filter(ChatTypeFilter(chat_type=["group", "supergroup"]))
 
 @router.message(Command('start'))
 async def start_handler(message: types.Message):
-    await message.answer(HELLO_TEXT, reply_markup=throw_keyboard_button())
+    await message.reply(HELLO_TEXT, reply_markup=throw_keyboard_button())
 
 
 @router.message(F.text.lower() == 'бросок')
 async def throw_handler(message: types.Message):
     action = random.choice(throw_actions)
-    await message.answer(action)
+    await message.reply(action)
