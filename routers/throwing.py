@@ -3,6 +3,8 @@ import random
 import structlog
 from aiogram import Router, types, F
 from aiogram.filters import Command
+from aiogram.enums.parse_mode import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 
 from constants import HELLO_TEXT, throw_actions
 from filters.chat_type import ChatTypeFilter
@@ -21,4 +23,9 @@ async def start_handler(message: types.Message):
 @router.message(F.text.lower() == 'бросок')
 async def throw_handler(message: types.Message):
     action = random.choice(throw_actions)
-    await message.reply(action)
+    try:
+        await message.delete()
+        await message.answer(action, parse_mode=ParseMode.MARKDOWN)
+    except TelegramBadRequest as exception:
+        if "message can't be deleted" in exception.message:
+            await message.answer('Для полного функционирования выдайте мне права на редактирование')
