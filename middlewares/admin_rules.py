@@ -1,6 +1,5 @@
 from aiogram import types
-from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram.dispatcher.event.handler import CancelHandler
+from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.exceptions import TelegramBadRequest
 
 class AdminCheckMiddleware(BaseMiddleware):
