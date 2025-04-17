@@ -17,14 +17,6 @@ class AdminCheckMiddleware(BaseMiddleware):
             bot = event.bot
 
             try:
-                member = await bot.get_chat_member(chat_id, user_id)
-                if member.status not in ("administrator", "creator"):
-                    try:
-                        await event.answer("🚫 Команда доступна только администраторам.")
-                    except TelegramBadRequest as e:
-                        logger.warning(f"Ошибка при попытке отправить ответ: {e}")
-                    raise CancelHandler()
-
                 bot_id = (await bot.me()).id
                 bot_member = await bot.get_chat_member(chat_id, bot_id)
 
