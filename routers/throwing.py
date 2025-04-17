@@ -12,7 +12,8 @@ from middlewares.ensure_starting import EnsureStartedMiddleware
 logger = structlog.get_logger(__name__)
 router = Router()
 router.message.filter(ChatTypeFilter(chat_type=["group", "supergroup"]))
-router.message.middleware(AdminCheckMiddleware(), EnsureStartedMiddleware())
+router.message.middleware(AdminCheckMiddleware())
+router.message.middleware(EnsureStartedMiddleware())
 
 
 @router.message(F.text.lower() == 'бросок')

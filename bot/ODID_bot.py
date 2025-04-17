@@ -16,15 +16,19 @@ storage = MemoryStorage()
 dispatcher = Dispatcher(storage=storage)
 
 
-@throwing_router.message(Command('start'))
+@dispatcher.message(Command('start'))
 async def start_handler(message: types.Message, group_members_map: dict):
     chat_id = message.chat.id
     members = await odid_bot.get_chat_administrators(chat_id)
-    user_ids = [member.user.id for member in members]
-    random.shuffle(user_ids)
-    group_members_map[chat_id] = {user_id: index + 1 for index, user_id in enumerate(user_ids)}
+    users = [member.user.id for member in members]
+    random.shuffle(users)
+    group_members_map[chat_id] = {user_id: index + 1 for index, user_id in enumerate(users)}
     await message.answer(
-        f"Список участников группы {group_members_map.items()} с рандомными порядковыми номерами.", 
+        f"""
+        👋 Привет! Ваши порядковые номер: {
+            [await odid_bot.get_chat_member(chat_id, member_id) for member_id in group_members_map[chat_id]]
+        }
+        """,
         reply_markup=throw_keyboard_button()
     )
 
