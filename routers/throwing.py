@@ -8,6 +8,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from constants import HELLO_TEXT, throw_actions
 from filters.chat_type import ChatTypeFilter
+from middlewares.admin_rules import AdminCheckMiddleware
 from keyboards.for_throwing import throw_keyboard_button
 
 logger = structlog.get_logger(__name__)
@@ -21,6 +22,7 @@ async def start_handler(message: types.Message):
 
 
 @router.message(F.text.lower() == 'бросок')
+@AdminCheckMiddleware()
 async def throw_handler(message: types.Message):
     action = random.choice(throw_actions)
     try:
