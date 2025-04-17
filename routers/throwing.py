@@ -25,9 +25,5 @@ async def start_handler(message: types.Message):
 @AdminCheckMiddleware()
 async def throw_handler(message: types.Message):
     action = random.choice(throw_actions)
-    try:
-        await message.delete()
-        await message.answer(action, parse_mode=ParseMode.MARKDOWN)
-    except TelegramBadRequest as exception:
-        if "message can't be deleted" in exception.message:
-            await message.answer('Для полного функционирования выдайте мне права на редактирование')
+    await message.delete()
+    await message.answer(action, parse_mode=ParseMode.MARKDOWN)
