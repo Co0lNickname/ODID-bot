@@ -46,10 +46,7 @@ async def confirm_handler(message: types.Message, confirmed_participants: dict):
         return
     
     confirmed_participants[chat_id].add(user_id)
-    await message.answer(
-        f"✅ {message.from_user.first_name}, ваше участие подтверждено!",
-        reply_markup=types.ReplyKeyboardRemove()
-    )
+    await message.answer(f"✅ {message.from_user.first_name}, ваше участие подтверждено!")
 
 @router.message(Command('finish'))
 async def finish_handler(
