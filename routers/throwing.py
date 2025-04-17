@@ -11,10 +11,10 @@ from middlewares.admin_rules import AdminCheckMiddleware
 logger = structlog.get_logger(__name__)
 router = Router()
 router.message.filter(ChatTypeFilter(chat_type=["group", "supergroup"]))
+router.message.middleware(AdminCheckMiddleware())
 
 
 @router.message(F.text.lower() == 'бросок')
-@AdminCheckMiddleware()
 async def throw_handler(message: types.Message):
     action = random.choice(throw_actions)
     await message.delete()

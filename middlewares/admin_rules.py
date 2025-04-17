@@ -1,8 +1,14 @@
+from abc import ABC
+
 from aiogram import types
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
+from aiogram.dispatcher.middlewares.error import CancelHandler
 from aiogram.exceptions import TelegramBadRequest
 
-class AdminCheckMiddleware(BaseMiddleware):
+class AdminCheckMiddleware(BaseMiddleware, ABC):
+    async def __call__(self, handler, event, data):
+        return await handler(event, data)
+
     async def on_pre_process_update(self, update: types.Update, data: dict):
         try:
             if update.message:
