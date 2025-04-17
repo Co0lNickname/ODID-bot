@@ -6,13 +6,15 @@ from aiogram.dispatcher.middlewares.error import CancelHandler
 class EnsureStartedMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         if isinstance(event, types.Message):
-            users_dict = data.get('group_members_map', {})
+            group_members_map = data.get('group_members_map', {})
             chat_id = event.chat.id
             user_id = event.from_user.id
-            key = (chat_id, user_id)
-
-            if key not in users_dict:
-                await event.answer("⚠️ Сначала введите /start, чтобы получить номер.")
+            
+            if event.text in ['/start', 'Подтвердить участие', '/finish']:
+                return await handler(event, data)
+                
+            if chat_id not in group_members_map or user_id not in group_members_map.get(chat_id, {}):
+                await event.answer("⚠️ Сначала нужно подтвердить участие и дождаться окончания расчета (/finish).")
                 raise CancelHandler()
 
         return await handler(event, data)

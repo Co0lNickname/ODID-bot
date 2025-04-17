@@ -17,7 +17,10 @@ router.message.middleware(EnsureStartedMiddleware())
 
 
 @router.message(F.text.lower() == 'бросок')
-async def throw_handler(message: types.Message):
+async def throw_handler(message: types.Message, group_members_map: dict):
     action = random.choice(throw_actions)
+    name = message.from_user.first_name
+    sequence_number = group_members_map[message.chat.id][message.from_user.id]
+    result_message = f"{name} ({sequence_number})\n\n🎲 {action}"
     await message.delete()
-    await message.answer(action, parse_mode=ParseMode.MARKDOWN)
+    await message.answer(result_message, parse_mode=ParseMode.MARKDOWN)
