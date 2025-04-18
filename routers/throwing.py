@@ -53,7 +53,7 @@ async def finish_handler(
     message: types.Message,
     confirmed_participants: dict,
     group_members_map: dict,
-    bot: Bot
+    odid_bot: Bot
 ):
     chat_id = message.chat.id
     
@@ -73,7 +73,7 @@ async def finish_handler(
     result_message = "🎲 Результаты:\n\n"
     
     for user_id, number in group_members_map[chat_id].items():
-        user = await bot.get_chat_member(chat_id, user_id)
+        user = await odid_bot.get_chat_member(chat_id, user_id)
         user_name = user.user.first_name
         if user.user.last_name:
             user_name += f" {user.user.last_name}"

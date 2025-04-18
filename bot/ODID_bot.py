@@ -37,7 +37,7 @@ async def run():
 
     await dispatcher.start_polling(
         odid_bot,
-        bot=odid_bot,
+        odid_bot=odid_bot,
         group_members_map={},
         confirmed_participants={}
     )
