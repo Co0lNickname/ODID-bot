@@ -20,7 +20,16 @@ router.message.middleware(EnsureStartedMiddleware())
 
 
 @router.message(Command('start'))
-async def start_handler(message: types.Message, confirmed_participants: dict):
+async def start_handler(
+    message: types.Message, 
+    confirmed_participants: dict, 
+    group_members_map: dict, 
+    previous_throws: dict
+):
+    confirmed_participants = {}
+    group_members_map = {}
+    previous_throws = {}
+
     chat_id = message.chat.id
     if chat_id not in confirmed_participants:
         confirmed_participants[chat_id] = set()
@@ -85,10 +94,23 @@ async def finish_handler(
 
 
 @router.message(F.text.lower() == 'бросок')
-async def throw_handler(message: types.Message, group_members_map: dict):
+async def throw_handler(message: types.Message, group_members_map: dict, previous_throws: dict):
+    user_id = message.from_user.id
+    chat_id = message.chat.id
     action = random.choice(throw_actions)
+
+    if chat_id not in previous_throws.keys():
+        previous_throws[chat_id] = {}
+    
+    elif user_id not in previous_throws[chat_id].keys():
+        previous_throws[chat_id][user_id] = action
+
+    elif user_id in previous_throws[chat_id].keys():
+        await message.answer(f"❌ Вы уже кидали {previous_throws[chat_id][user_id]}")
+        return
+    
     name = message.from_user.first_name
-    sequence_number = group_members_map[message.chat.id][message.from_user.id]
+    sequence_number = group_members_map[chat_id][user_id]
     result_message = f"{name} ({sequence_number})\n\n🎲 {action}"
     await message.delete()
     await message.answer(result_message, parse_mode=ParseMode.MARKDOWN)
