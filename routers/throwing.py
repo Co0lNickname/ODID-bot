@@ -19,20 +19,18 @@ router.message.middleware(AdminCheckMiddleware())
 router.message.middleware(EnsureStartedMiddleware())
 
 
+confirmed_participants = {}
+previous_throws = {}
+
 @router.message(Command('start'))
 async def start_handler(
-    message: types.Message, 
-    confirmed_participants: dict, 
-    group_members_map: dict, 
-    previous_throws: dict
+    message: types.Message,
+    group_members_map: dict,
 ):
-    confirmed_participants = {}
-    group_members_map = {}
-    previous_throws = {}
-
     chat_id = message.chat.id
-    if chat_id not in confirmed_participants:
-        confirmed_participants[chat_id] = set()
+    previous_throws[chat_id] = {}
+    group_members_map[chat_id] = {}
+    confirmed_participants[chat_id] = set()
     
     await message.answer(
         "👋 Привет! Подтверди участие, нажав на кнопку ниже.\n\nЕсли хотите завершить расчет, нажмите /finish",
@@ -40,7 +38,7 @@ async def start_handler(
     )
 
 @router.message(lambda message: message.text == "Подтвердить участие")
-async def confirm_handler(message: types.Message, confirmed_participants: dict):
+async def confirm_handler(message: types.Message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     
@@ -60,7 +58,6 @@ async def confirm_handler(message: types.Message, confirmed_participants: dict):
 @router.message(Command('finish'))
 async def finish_handler(
     message: types.Message,
-    confirmed_participants: dict,
     group_members_map: dict,
     odid_bot: Bot
 ):
@@ -94,7 +91,7 @@ async def finish_handler(
 
 
 @router.message(F.text.lower() == 'бросок')
-async def throw_handler(message: types.Message, group_members_map: dict, previous_throws: dict):
+async def throw_handler(message: types.Message, group_members_map: dict):
     user_id = message.from_user.id
     chat_id = message.chat.id
     action = random.choice(throw_actions)
@@ -102,7 +99,10 @@ async def throw_handler(message: types.Message, group_members_map: dict, previou
     if chat_id not in previous_throws.keys():
         previous_throws[chat_id] = {}
     
-    elif user_id not in previous_throws[chat_id].keys():
+    if user_id not in previous_throws[chat_id].keys():
+        if previous_throws[chat_id] and len(previous_throws[chat_id]) != 0:
+            previous_thrower_id = list(previous_throws[chat_id].keys())[0]
+            previous_throws[chat_id].pop(previous_thrower_id, None)
         previous_throws[chat_id][user_id] = action
 
     elif user_id in previous_throws[chat_id].keys():
