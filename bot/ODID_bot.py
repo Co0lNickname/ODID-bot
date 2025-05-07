@@ -39,6 +39,4 @@ async def run():
         odid_bot,
         odid_bot=odid_bot,
         group_members_map={},
-        previous_throws={},
-        confirmed_participants={}
     )
