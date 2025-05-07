@@ -6,7 +6,7 @@ from aiogram import Router, types, F, Bot
 from aiogram.enums.chat_type import ChatType
 from aiogram.enums.parse_mode import ParseMode
 
-from constants import throw_actions
+from constants import get_throw_actions_for_players_count, InvalidPlayersCountException
 from filters.chat_type import ChatTypeFilter
 from middlewares.admin_rules import AdminCheckMiddleware
 from middlewares.ensure_starting import EnsureStartedMiddleware
@@ -94,7 +94,15 @@ async def finish_handler(
 async def throw_handler(message: types.Message, group_members_map: dict):
     user_id = message.from_user.id
     chat_id = message.chat.id
-    action = random.choice(throw_actions)
+    players_count = len(group_members_map.get(chat_id, {}))
+
+    try:
+        actions = get_throw_actions_for_players_count(players_count)
+    except InvalidPlayersCountException as error:
+        await message.answer(error.msg)
+        return
+
+    action = random.choice(actions)
 
     if chat_id not in previous_throws.keys():
         previous_throws[chat_id] = {}
