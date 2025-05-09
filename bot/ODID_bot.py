@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.enums.chat_type import ChatType
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from constants import BotTexts
 from routers.throwing import router as throwing_router
 from filters.chat_type import ChatTypeFilter
 from settings import telegram_bot_token
@@ -18,9 +19,7 @@ dispatcher = Dispatcher(storage=storage)
 
 @dispatcher.message(Command('start'), ChatTypeFilter(chat_type=[ChatType.PRIVATE, ChatType.SENDER]))
 async def start_handler(message: types.Message):
-    await message.answer(
-        "👋 Бот предназначен для групповых чатов, поэтому нельзя использовать его в личных сообщениях.",
-    )
+    await message.answer(BotTexts.NotInGroupMessages.HELLO_TEXT)
 
 
 async def run():

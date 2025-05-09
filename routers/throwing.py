@@ -6,7 +6,7 @@ from aiogram import Router, types, F, Bot
 from aiogram.enums.chat_type import ChatType
 from aiogram.enums.parse_mode import ParseMode
 
-from constants import get_throw_actions_for_players_count, InvalidPlayersCountException
+from constants import get_throw_actions_for_players_count, InvalidPlayersCountException, BotTexts
 from filters.chat_type import ChatTypeFilter
 from middlewares.admin_rules import AdminCheckMiddleware
 from middlewares.ensure_starting import EnsureStartedMiddleware
@@ -33,7 +33,7 @@ async def start_handler(
     confirmed_participants[chat_id] = set()
     
     await message.answer(
-        "👋 Привет! Подтверди участие, нажав на кнопку ниже.\n\nЕсли хотите завершить расчет, нажмите /finish",
+        BotTexts.DuringPlayMessages.CONFIRM_PARTICIPATION_TEXT,
         reply_markup=confirm_participation_button()
     )
 
@@ -47,13 +47,15 @@ async def confirm_handler(message: types.Message):
     
     if user_id in confirmed_participants[chat_id]:
         await message.answer(
-            f"❌ {message.from_user.first_name}, вы уже подтвердили участие!",
+            BotTexts.DuringPlayMessages.ALREADY_CONFIRMED_TEXT.format(player=message.from_user.first_name),
             reply_markup=types.ReplyKeyboardRemove()
         )
         return
     
     confirmed_participants[chat_id].add(user_id)
-    await message.answer(f"✅ {message.from_user.first_name}, ваше участие подтверждено!")
+    await message.answer(
+        BotTexts.DuringPlayMessages.CONFIRMED_PARTICIPATION_TEXT.format(player=message.from_user.first_name)
+    )
 
 @router.message(Command('finish'))
 async def finish_handler(
@@ -64,7 +66,7 @@ async def finish_handler(
     chat_id = message.chat.id
     
     if chat_id not in confirmed_participants or not confirmed_participants[chat_id]:
-        await message.answer("❌ Никто не подтвердил участие!")
+        await message.answer(BotTexts.DuringPlayMessages.NOBODY_CONFIRMED_TEXT)
         return
     
     participants = list(confirmed_participants[chat_id])
@@ -114,7 +116,9 @@ async def throw_handler(message: types.Message, group_members_map: dict):
         previous_throws[chat_id][user_id] = action
 
     elif user_id in previous_throws[chat_id].keys():
-        await message.answer(f"❌ Вы уже кидали {previous_throws[chat_id][user_id]}")
+        await message.answer(
+            BotTexts.DuringPlayMessages.ALREADY_THROW_TEXT.format(throw=previous_throws[chat_id][user_id])
+        )
         return
     
     name = message.from_user.first_name

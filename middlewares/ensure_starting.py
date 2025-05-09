@@ -2,6 +2,8 @@ from aiogram import types
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.dispatcher.middlewares.error import CancelHandler
 
+from constants import BotTexts
+
 
 class EnsureStartedMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
@@ -23,9 +25,7 @@ class EnsureStartedMiddleware(BaseMiddleware):
                 chat_id not in group_members_map 
                 or user_id not in group_members_map.get(chat_id, {})
             ):
-                await event.answer(
-                    "⚠️ Сначала нужно подтвердить участие и дождаться окончания расчета (/finish)."
-                )
+                await event.answer(BotTexts.MiddlewaresTexts.EnsureStarted.CONFIRM_PARTICIPATION_FIRST_TEXT)
                 raise CancelHandler()
 
         return await handler(event, data)

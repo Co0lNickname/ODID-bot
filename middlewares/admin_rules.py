@@ -6,6 +6,8 @@ from aiogram.dispatcher.middlewares.error import CancelHandler
 from aiogram.dispatcher.middlewares.base import BaseMiddleware
 from aiogram.types.chat_member_administrator import ChatMemberAdministrator
 
+from constants import BotTexts, LoggingMessages
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,23 +25,23 @@ class AdminCheckMiddleware(BaseMiddleware):
                 if isinstance(bot_member, ChatMemberAdministrator):
                     if not bot_member.can_delete_messages:
                         try:
-                            await event.answer("⚠️ У бота нет прав на удаление сообщений. Пожалуйста, добавьте эти права.")
+                            await event.answer(BotTexts.MiddlewaresTexts.AdminCheck.NO_RULES_ADD_IT_TEXT)
                         except TelegramBadRequest as e:
-                            logger.warning(f"Ошибка при попытке отправить предупреждение: {e}")
+                            logger.warning(LoggingMessages.AdminCheck.ERROR_DURING_SEND_WARNING.format(error=e))
                         raise CancelHandler()
                 else:
                     try:
-                        await event.answer("🚫 У бота нет прав администратора.")
+                        await event.answer(BotTexts.MiddlewaresTexts.AdminCheck.NO_ADMIN_RULES_TEXT)
                     except TelegramBadRequest as e:
-                        logger.warning(f"Ошибка при попытке отправить предупреждение: {e}")
+                        logger.warning(LoggingMessages.AdminCheck.ERROR_DURING_SEND_WARNING.format(error=e))
                     raise CancelHandler()
 
             except TelegramBadRequest as e:
-                logger.error(f"Ошибка при проверке прав: {e}")
+                logger.error(LoggingMessages.AdminCheck.ERROR_DURING_RULES_CHECK.format(error=e))
                 try:
-                    await event.answer("❌ Ошибка при проверке прав доступа.")
+                    await event.answer(BotTexts.MiddlewaresTexts.AdminCheck.ERROR_DURING_RULES_CHECK_TEXT)
                 except TelegramBadRequest as err:
-                    logger.warning(f"Ошибка при попытке отправить сообщение об ошибке: {err}")
+                    logger.warning(LoggingMessages.AdminCheck.ERROR_DURING_SEND_WARNING.format(error=err))
                 raise CancelHandler()
 
         return await handler(event, data)
