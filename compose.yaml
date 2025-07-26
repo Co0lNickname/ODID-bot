@@ -1,5 +1,5 @@
 x-bot-variables: &bot-variables
-  TELEGRAM_BOT_TOKEN_KEY: 7539369932:AAGqlBtzdRz7VAypTtgLaiJN-V3U9kmXuh8
+  TELEGRAM_BOT_TOKEN_KEY: ''
 services:
   bot:
     container_name: odid-bot
